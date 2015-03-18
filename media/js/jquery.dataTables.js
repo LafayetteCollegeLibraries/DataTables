@@ -1992,11 +1992,13 @@
 			filter   = features.bFilter;
 	
 		if ( sort ) {
-			_fnSort( settings );
+
+		    _fnSort( settings );
 		}
 	
 		if ( filter ) {
-			_fnFilterComplete( settings, settings.oPreviousSearch );
+		    
+		    _fnFilterComplete( settings, settings.oPreviousSearch );
 		}
 		else {
 			// No filtering, so we want to just use the display master
@@ -4378,7 +4380,7 @@
 			// Load the data needed for the sort, for each cell
 			_fnSortData( oSettings, sortCol.col );
 		}
-	
+
 		/* No sorting required if server-side or no sorting array */
 		if ( _fnDataSource( oSettings ) != 'ssp' && aSort.length !== 0 )
 		{
@@ -4528,6 +4530,22 @@
 	 */
 	function _fnSortListener ( settings, colIdx, append, callback )
 	{
+
+	    /**
+	     * @author griffinj@lafayette.edu
+	     * An improvement was captured in which sorting in response to a user agent pressing the return key for an <input> element was considered to be undesirable
+	     * Resolves EDDC-339
+	     *
+	     */
+	    var keyupEvent = $(document).data('dssElc.dataTables.columnKeyup');
+
+	    //if( settings.aoPreSearchCols[colIdx].sSearch == '' ) {
+	    if( keyupEvent && typeof(keyupEvent) != 'undefined' && keyupEvent.keyCode == 13 ) {
+
+		$(document).data('dssElc.dataTables.columnKeyup', null);
+		return;
+	    }
+
 		var col = settings.aoColumns[ colIdx ];
 		var sorting = settings.aaSorting;
 		var asSorting = col.asSorting;
@@ -4670,10 +4688,12 @@
 	// cache), or from a sort formatter
 	function _fnSortData( settings, idx )
 	{
-		// Custom sorting function - provided by the sort data type
-		var column = settings.aoColumns[ idx ];
-		var customSort = DataTable.ext.order[ column.sSortDataType ];
-		var customData;
+
+	    // Custom sorting function - provided by the sort data type
+	    var column = settings.aoColumns[ idx ];
+
+	    var customSort = DataTable.ext.order[ column.sSortDataType ];
+	    var customData;
 	
 		if ( customSort ) {
 			customData = customSort.call( settings.oInstance, settings, idx,
