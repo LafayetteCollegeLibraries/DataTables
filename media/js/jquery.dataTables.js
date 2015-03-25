@@ -4802,6 +4802,21 @@
 		var col = settings.aoColumns[ colIdx ];
 	
 		_fnBindAction( attachTo, {}, function (e) {
+
+			/**
+			 * griffinj@lafayette.edu
+			 * Resolves EDDC-339
+			 *
+			 */
+
+			//var keyupEvent = $(document).data('dssElc.dataTables.columnKeyup');
+			//if( keyupEvent && typeof(keyupEvent) != 'undefined' && keyupEvent.keyCode == 13 ) {
+			if( e.type == 'keypress' && e.keyCode == 13 && e.target.value == '' ) {
+
+			 	//$(document).data('dssElc.dataTables.columnKeyup', null);
+				return;
+			}
+
 			/* If the column is not sortable - don't to anything */
 			if ( col.bSortable === false ) {
 				return;
